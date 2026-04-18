@@ -1,0 +1,6 @@
+PostgreSQL:
+Host: 76.13.7.106
+POSTGRES_USER: postgres
+POSTGRES_PASSWORD: CrScHsWBhgfMzBm2FGoGmQs53z4K611n
+POSTGRES_DB: postgresdb
+Port: 5432
