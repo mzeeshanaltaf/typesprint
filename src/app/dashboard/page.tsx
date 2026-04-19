@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { desc, eq, sql } from "drizzle-orm";
@@ -6,16 +7,9 @@ import { Clock, Flame, Gauge, Trophy } from "lucide-react";
 
 import { AppNavbar } from "@/components/layout/app-navbar";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { DashboardCharts } from "@/components/dashboard/dashboard-charts";
+import { SessionsTable } from "@/components/dashboard/sessions-table";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { dailyStat, streak, typingSession, lesson } from "@/db/schema";
@@ -25,6 +19,10 @@ export const metadata: Metadata = {
   description: "Your typing progress — WPM trends, streak, and recent sessions.",
 };
 
+function formatDate(d: Date): string {
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+}
+
 function formatDuration(totalSec: number): string {
   if (totalSec < 60) return `${totalSec}s`;
   const m = Math.floor(totalSec / 60);
@@ -32,21 +30,6 @@ function formatDuration(totalSec: number): string {
   return s > 0 ? `${m}m ${s}s` : `${m}m`;
 }
 
-function formatDate(d: Date | string): string {
-  const date = typeof d === "string" ? new Date(d) : d;
-  return date.toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-  });
-}
-
-function formatTime(d: Date | string): string {
-  const date = typeof d === "string" ? new Date(d) : d;
-  return date.toLocaleTimeString(undefined, {
-    hour: "numeric",
-    minute: "2-digit",
-  });
-}
 
 export default async function DashboardPage() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -169,69 +152,19 @@ export default async function DashboardPage() {
 
           <Card className="border-border/60 bg-card/60 backdrop-blur">
             <CardContent className="p-0">
-              <div className="flex items-baseline justify-between p-6 pb-4">
+              <div className="flex items-center justify-between p-6 pb-4">
                 <h2 className="text-lg font-semibold">Recent sessions</h2>
-                <span className="text-xs text-muted-foreground">
-                  Last {recentSessions.length}
-                </span>
+                <Button asChild variant="ghost" size="sm">
+                  <Link href="/dashboard/sessions">View all</Link>
+                </Button>
               </div>
-              {recentSessions.length === 0 ? (
-                <p className="px-6 pb-6 text-sm text-muted-foreground">
-                  No sessions yet. Head to{" "}
-                  <a className="text-indigo-500 hover:underline" href="/practice">
-                    /practice
-                  </a>{" "}
-                  to run one.
-                </p>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>When</TableHead>
-                      <TableHead>Mode</TableHead>
-                      <TableHead className="text-right">WPM</TableHead>
-                      <TableHead className="text-right">Accuracy</TableHead>
-                      <TableHead className="text-right">Mistakes</TableHead>
-                      <TableHead className="text-right">Duration</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {recentSessions.map((s) => (
-                      <TableRow key={s.id}>
-                        <TableCell className="whitespace-nowrap">
-                          <div className="flex flex-col">
-                            <span>{formatDate(s.createdAt)}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {formatTime(s.createdAt)}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="secondary" className="capitalize">
-                            {s.mode === "lesson" && s.lessonTitle
-                              ? s.lessonTitle
-                              : s.mode === "custom"
-                                ? "Free"
-                                : `${s.mode}s`}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right font-mono font-medium">
-                          {s.wpm}
-                        </TableCell>
-                        <TableCell className="text-right font-mono">
-                          {s.accuracy}%
-                        </TableCell>
-                        <TableCell className="text-right font-mono text-muted-foreground">
-                          {s.mistakes}
-                        </TableCell>
-                        <TableCell className="text-right font-mono text-muted-foreground">
-                          {formatDuration(s.durationSec)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
+              <SessionsTable
+                sessions={recentSessions.map((s) => ({
+                  ...s,
+                  createdAt: s.createdAt.toISOString(),
+                  lessonTitle: s.lessonTitle ?? null,
+                }))}
+              />
             </CardContent>
           </Card>
         </div>
