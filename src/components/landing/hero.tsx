@@ -33,8 +33,8 @@ export function Hero() {
             variant="secondary"
             className="gap-1.5 rounded-full border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium backdrop-blur"
           >
-            <Sparkles className="size-3" />
-            Practice. Track. Sprint ahead.
+            <Sparkles className="size-3 text-indigo-500" />
+            New · AI-generated typing lessons
           </Badge>
         </motion.div>
 
@@ -58,8 +58,9 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="mt-6 max-w-2xl text-balance text-lg text-muted-foreground md:text-xl"
         >
-          Improve your speed, accuracy, and confidence with real-time practice,
-          structured lessons, and progress analytics that actually motivate.
+          Sprint through real-time drills, follow structured lessons, or
+          generate your own AI lesson on any topic, difficulty, and length —
+          then watch your progress climb in a dashboard built to motivate.
         </motion.p>
 
         <motion.div
@@ -75,7 +76,13 @@ export function Hero() {
               <ArrowRight className="size-4" />
             </Link>
           </Button>
-          <Button asChild size="lg" variant="outline">
+          <Button asChild size="lg" variant="outline" className="gap-2">
+            <Link href="/ai-lessons">
+              <Sparkles className="size-4 text-indigo-500" />
+              Generate with AI
+            </Link>
+          </Button>
+          <Button asChild size="lg" variant="ghost">
             <Link href="/lessons">View Lessons</Link>
           </Button>
         </motion.div>

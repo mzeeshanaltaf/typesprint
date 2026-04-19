@@ -7,8 +7,8 @@ import { Section, SectionHeader } from "@/components/landing/section";
 const steps = [
   {
     n: "01",
-    title: "Choose a lesson",
-    body: "Pick a level — beginner, intermediate, or advanced — or jump into a free sprint.",
+    title: "Choose or generate",
+    body: "Pick a curated lesson, jump into a free sprint, or have AI generate a custom drill on any topic.",
   },
   {
     n: "02",

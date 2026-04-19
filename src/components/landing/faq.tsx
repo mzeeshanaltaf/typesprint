@@ -10,6 +10,10 @@ import { Section, SectionHeader } from "@/components/landing/section";
 
 const faqs = [
   {
+    q: "What are AI-generated lessons?",
+    a: "Tell TypeSprint a topic, difficulty, length, tone — and a programming language for code drills — and OpenAI writes a custom lesson tailored to you. Each lesson is saved to your library so you can retype it and track your best WPM and accuracy across attempts.",
+  },
+  {
     q: "How do I improve my typing speed?",
     a: "Consistency beats intensity. Aim for 10–15 focused minutes per day, prioritize accuracy over raw speed early on, and let TypeSprint guide you from drills to full paragraphs as you progress.",
   },

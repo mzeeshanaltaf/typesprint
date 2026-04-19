@@ -6,7 +6,7 @@ import {
   Target,
   GraduationCap,
   LineChart,
-  Moon,
+  Sparkles,
   Keyboard,
 } from "lucide-react";
 
@@ -14,6 +14,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Section, SectionHeader } from "@/components/landing/section";
 
 const features = [
+  {
+    icon: Sparkles,
+    title: "AI-generated lessons",
+    description:
+      "Pick a topic, difficulty, length, and tone — OpenAI writes a custom drill saved to your library to retype anytime.",
+  },
   {
     icon: Activity,
     title: "Real-time WPM",
@@ -43,12 +49,6 @@ const features = [
     title: "Multiple modes",
     description:
       "Sprint for 15s, push through 30s/60s, or set a custom timer to suit your goals.",
-  },
-  {
-    icon: Moon,
-    title: "Dark mode",
-    description:
-      "A polished light and dark theme designed for long, comfortable practice sessions.",
   },
 ];
 

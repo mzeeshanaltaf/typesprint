@@ -32,6 +32,7 @@ const plans = [
     description: "For learners who want to track real progress.",
     features: [
       "Everything in Free",
+      "AI-generated lessons (any topic)",
       "All advanced & coding lessons",
       "Full progress dashboard & charts",
       "Streaks, personal bests, exports",

@@ -1,6 +1,7 @@
 import { SiteNavbar } from "@/components/layout/site-navbar";
 import { Hero } from "@/components/landing/hero";
 import { Features } from "@/components/landing/features";
+import { AiLessons } from "@/components/landing/ai-lessons";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { Benefits } from "@/components/landing/benefits";
 import { Testimonials } from "@/components/landing/testimonials";
@@ -16,6 +17,7 @@ export default function HomePage() {
       <main className="flex-1">
         <Hero />
         <Features />
+        <AiLessons />
         <HowItWorks />
         <Benefits />
         <Testimonials />
