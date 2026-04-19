@@ -123,7 +123,7 @@ export async function POST(req: Request) {
       .where(eq(streak.userId, userId));
   }
 
-  revalidateTag("typing-sessions");
+  revalidateTag("typing-sessions", "max");
 
   return NextResponse.json({ ok: true });
 }
