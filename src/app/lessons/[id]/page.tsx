@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { ArrowLeft } from "lucide-react";
 
-import { AppNavbar } from "@/components/layout/app-navbar";
+import { PublicPageLayout } from "@/components/layout/public-page-layout";
 import { Badge } from "@/components/ui/badge";
 import { LessonClient } from "@/components/typing/lesson-client";
 import { db } from "@/lib/db";
@@ -46,10 +46,8 @@ export default async function LessonPage({
   if (!l) notFound();
 
   return (
-    <div className="flex min-h-svh flex-col">
-      <AppNavbar />
-      <main className="flex-1">
-        <div className="mx-auto w-full max-w-4xl px-4 py-12 md:px-6 md:py-16">
+    <PublicPageLayout>
+      <div className="mx-auto w-full max-w-4xl px-4 py-12 md:px-6 md:py-16">
           <Link
             href="/lessons"
             className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -77,8 +75,7 @@ export default async function LessonPage({
           </header>
 
           <LessonClient lessonId={l.id} content={l.content} />
-        </div>
-      </main>
-    </div>
+      </div>
+    </PublicPageLayout>
   );
 }

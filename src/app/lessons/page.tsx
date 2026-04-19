@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { asc } from "drizzle-orm";
 
-import { AppNavbar } from "@/components/layout/app-navbar";
+import { PublicPageLayout } from "@/components/layout/public-page-layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { db } from "@/lib/db";
@@ -55,10 +55,8 @@ export default async function LessonsPage() {
   );
 
   return (
-    <div className="flex min-h-svh flex-col">
-      <AppNavbar />
-      <main className="flex-1">
-        <div className="mx-auto w-full max-w-6xl px-4 py-12 md:px-6 md:py-16">
+    <PublicPageLayout>
+      <div className="mx-auto w-full max-w-6xl px-4 py-12 md:px-6 md:py-16">
           <header className="mb-12 flex flex-col gap-3">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
               Lessons
@@ -125,8 +123,7 @@ export default async function LessonsPage() {
               to populate.
             </p>
           )}
-        </div>
-      </main>
-    </div>
+      </div>
+    </PublicPageLayout>
   );
 }

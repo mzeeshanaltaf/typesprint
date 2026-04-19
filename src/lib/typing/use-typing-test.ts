@@ -107,7 +107,14 @@ export function useTypingTest({
       }
       setTyped((t) => {
         if (t.length >= sample.length) return t;
-        const next = t + key;
+        let next = t + key;
+        // After typing a newline, auto-consume any leading spaces on the next
+        // line so the user doesn't have to manually type indentation.
+        if (key === "\n") {
+          while (next.length < sample.length && sample[next.length] === " ") {
+            next += " ";
+          }
+        }
         if (next.length === sample.length) {
           setStatus("done");
         }

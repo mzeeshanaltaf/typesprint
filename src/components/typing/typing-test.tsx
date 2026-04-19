@@ -132,7 +132,7 @@ export function TypingTest({
           onBlur={() => setFocused(false)}
           onClick={() => containerRef.current?.focus()}
           className={cn(
-            "relative cursor-text rounded-xl border border-border/60 bg-background/40 p-6 font-mono text-lg leading-relaxed tracking-wide outline-none transition-all md:text-xl",
+            "relative cursor-text rounded-xl border border-border/60 bg-background/40 p-6 font-mono text-lg leading-relaxed tracking-wide outline-none transition-all [font-variant-ligatures:none] md:text-xl",
             focused && "ring-2 ring-ring/40",
           )}
           aria-label="Typing area"
