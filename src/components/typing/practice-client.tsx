@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { TypingTest, type TypingMode } from "@/components/typing/typing-test";
+import { saveSession } from "@/app/actions/save-session";
 import { authClient } from "@/lib/auth-client";
 import {
   getShortSample,
@@ -52,22 +53,15 @@ export function PracticeClient() {
         return;
       }
       try {
-        const res = await fetch("/api/sessions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            mode,
-            durationSec: result.durationSec,
-            wpm: result.wpm,
-            accuracy: result.accuracy,
-            mistakes: result.mistakes,
-            charsTyped: result.charsTyped,
-          }),
+        const res = await saveSession({
+          mode,
+          durationSec: result.durationSec,
+          wpm: result.wpm,
+          accuracy: result.accuracy,
+          mistakes: result.mistakes,
+          charsTyped: result.charsTyped,
         });
-        if (!res.ok) {
-          const body = await res.text();
-          throw new Error(body || "Failed to save");
-        }
+        if (!res.ok) throw new Error(res.error);
         toast.success(`Saved · ${result.wpm} WPM · ${result.accuracy}% acc`);
       } catch (err) {
         toast.error(

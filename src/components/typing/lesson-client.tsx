@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import { toast } from "sonner";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { saveSession } from "@/app/actions/save-session";
 import { authClient } from "@/lib/auth-client";
 import type { TypingResult } from "@/lib/typing/use-typing-test";
 
@@ -22,9 +23,11 @@ const TypingTest = dynamic(
 export function LessonClient({
   lessonId,
   content,
+  mode = "lesson",
 }: {
   lessonId: string;
   content: string;
+  mode?: "lesson" | "ai_lesson";
 }) {
   const { data: session } = authClient.useSession();
 
@@ -35,20 +38,16 @@ export function LessonClient({
         return;
       }
       try {
-        const res = await fetch("/api/sessions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            mode: "lesson",
-            durationSec: result.durationSec,
-            wpm: result.wpm,
-            accuracy: result.accuracy,
-            mistakes: result.mistakes,
-            charsTyped: result.charsTyped,
-            lessonId,
-          }),
+        const res = await saveSession({
+          mode,
+          durationSec: result.durationSec,
+          wpm: result.wpm,
+          accuracy: result.accuracy,
+          mistakes: result.mistakes,
+          charsTyped: result.charsTyped,
+          lessonId,
         });
-        if (!res.ok) throw new Error(await res.text());
+        if (!res.ok) throw new Error(res.error);
         toast.success(`Saved · ${result.wpm} WPM · ${result.accuracy}% acc`);
       } catch (err) {
         toast.error(
@@ -56,13 +55,13 @@ export function LessonClient({
         );
       }
     },
-    [session, lessonId],
+    [session, lessonId, mode],
   );
 
   return (
     <TypingTest
       sample={content}
-      mode="lesson"
+      mode={mode}
       durationSec={null}
       lessonId={lessonId}
       onComplete={onComplete}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Zap, Menu, LayoutDashboard, BookOpen, Keyboard, LogOut, User } from "lucide-react";
+import { Zap, Menu, LayoutDashboard, BookOpen, Keyboard, LogOut, Sparkles, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/practice", label: "Practice", icon: Keyboard },
+  { href: "/ai-lessons", label: "AI Lessons", icon: Sparkles },
   { href: "/lessons", label: "Lessons", icon: BookOpen },
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
 ];

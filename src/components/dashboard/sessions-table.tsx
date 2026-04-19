@@ -43,20 +43,34 @@ function formatTime(iso: string): string {
 }
 
 function modeLabel(mode: string, lessonTitle: string | null): string {
+  if (mode === "ai_lesson" && lessonTitle) return `AI · ${lessonTitle}`;
+  if (mode === "ai_lesson") return "AI lesson";
   if (mode === "lesson" && lessonTitle) return lessonTitle;
   if (mode === "custom") return "Free";
   return `${mode}s`;
 }
 
-export function SessionsTable({ sessions }: { sessions: SessionRow[] }) {
+export function SessionsTable({
+  sessions,
+  showMode = true,
+  emptyMessage,
+}: {
+  sessions: SessionRow[];
+  showMode?: boolean;
+  emptyMessage?: React.ReactNode;
+}) {
   if (sessions.length === 0) {
     return (
       <p className="px-6 py-6 text-sm text-muted-foreground">
-        No sessions yet. Head to{" "}
-        <a className="text-indigo-500 hover:underline" href="/practice">
-          /practice
-        </a>{" "}
-        to run one.
+        {emptyMessage ?? (
+          <>
+            No sessions yet. Head to{" "}
+            <a className="text-indigo-500 hover:underline" href="/practice">
+              /practice
+            </a>{" "}
+            to run one.
+          </>
+        )}
       </p>
     );
   }
@@ -66,7 +80,7 @@ export function SessionsTable({ sessions }: { sessions: SessionRow[] }) {
       <TableHeader>
         <TableRow>
           <TableHead>When</TableHead>
-          <TableHead>Mode</TableHead>
+          {showMode && <TableHead>Mode</TableHead>}
           <TableHead className="text-right">WPM</TableHead>
           <TableHead className="text-right">Accuracy</TableHead>
           <TableHead className="text-right">Mistakes</TableHead>
@@ -84,11 +98,13 @@ export function SessionsTable({ sessions }: { sessions: SessionRow[] }) {
                 </span>
               </div>
             </TableCell>
-            <TableCell>
-              <Badge variant="secondary" className="capitalize">
-                {modeLabel(s.mode, s.lessonTitle)}
-              </Badge>
-            </TableCell>
+            {showMode && (
+              <TableCell>
+                <Badge variant="secondary" className="capitalize">
+                  {modeLabel(s.mode, s.lessonTitle)}
+                </Badge>
+              </TableCell>
+            )}
             <TableCell className="text-right font-mono font-medium">
               {s.wpm}
             </TableCell>

@@ -1,14 +1,18 @@
 # TypeSprint
 
-A modern typing tutor web app built with Next.js 16. Practice typing, track your progress, and work through structured lessons — all in a clean, dark-mode-first interface.
+> **Type smarter with AI — practice on lessons generated just for you.**
+
+A modern typing tutor web app built with Next.js 16. Practice typing, follow structured lessons, or generate your own AI-tailored drills on any topic, difficulty, and length — all in a clean, dark-mode-first interface.
 
 ![TypeSprint](docs/typing-board.png)
 
 ## Features
 
+- **AI-generated lessons** ✨ — describe a topic, pick difficulty / length / tone (and a programming language for code drills), and OpenAI generates a custom lesson saved to your library to retype anytime
+- **Per-lesson history** — every AI lesson page tracks all your attempts with best WPM, best accuracy, and a full attempts table
 - **Live typing test** — 15 / 30 / 60 s modes with real-time WPM, accuracy, and mistake tracking
 - **Structured lessons** — beginner → intermediate → advanced lessons grouped by category (home row, numbers, symbols, paragraphs, coding)
-- **Progress dashboard** — streak counter, best/avg WPM KPI cards, and interactive WPM + accuracy charts (last 30 days)
+- **Progress dashboard** — streak counter, best/avg WPM KPI cards, and interactive WPM + accuracy charts (last 30 days), with eager cache invalidation so new sessions appear instantly — no refresh required
 - **Authentication** — email/password sign-up and Google OAuth via Better Auth
 - **Admin panel** — CRUD for lessons, user role management, and platform-wide analytics
 - **Contact form** — progressive-enhancement form wired to an n8n webhook
@@ -25,6 +29,7 @@ A modern typing tutor web app built with Next.js 16. Practice typing, track your
 | Animations | Framer Motion |
 | Auth | Better Auth (email/password + Google OAuth) |
 | Database | PostgreSQL via Drizzle ORM (`typesprint` schema) |
+| AI | OpenAI Responses API (`gpt-5.4-nano`) |
 | Charts | Recharts |
 | Notifications | Sonner |
 | Hosting | Vercel |
@@ -61,6 +66,7 @@ cp .env.example .env.local
 | `BETTER_AUTH_URL` | Base URL of your app (e.g. `http://localhost:3000`) |
 | `GOOGLE_CLIENT_ID` | Google OAuth client ID |
 | `GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
+| `OPENAI_API_KEY` | OpenAI API key (required for AI-generated lessons) |
 | `N8N_API_KEY` | API key for the contact form webhook |
 
 ### 3. Run database migrations
@@ -89,17 +95,20 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ```
 src/
-├── app/                    # Next.js App Router pages & API routes
+├── app/                    # Next.js App Router pages & routes
 │   ├── (auth)/             # Sign-in / sign-up pages
+│   ├── actions/            # Server Actions (eager cache invalidation)
 │   ├── admin/              # Admin panel (lessons, users, analytics)
-│   ├── api/                # Route handlers (auth, sessions, contact)
+│   ├── ai-lessons/         # AI lesson generator + per-lesson detail pages
+│   ├── api/                # Route handlers (auth, ai-lessons/generate, contact)
 │   ├── dashboard/          # User progress dashboard
 │   ├── lessons/            # Lesson browser + individual lesson pages
 │   └── practice/           # Free typing practice page
 ├── components/
 │   ├── admin/              # Admin CRUD components
+│   ├── ai-lessons/         # Generate form + AI lesson cards
 │   ├── contact/            # Contact form
-│   ├── dashboard/          # Chart components
+│   ├── dashboard/          # Chart and table components
 │   ├── landing/            # Landing page sections
 │   ├── layout/             # Navbar, footer, shared wrappers
 │   ├── typing/             # Typing test engine components
@@ -110,6 +119,7 @@ src/
     ├── auth.ts             # Better Auth server config
     ├── auth-client.ts      # Better Auth client SDK
     ├── db.ts               # Drizzle client
+    ├── openai.ts           # OpenAI client + model constant
     └── typing/             # Pure typing engine (WPM, accuracy, char states)
 ```
 

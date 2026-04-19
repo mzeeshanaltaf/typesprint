@@ -14,7 +14,7 @@ import {
   type TypingResult,
 } from "@/lib/typing/use-typing-test";
 
-export type TypingMode = "15" | "30" | "60" | "custom" | "lesson";
+export type TypingMode = "15" | "30" | "60" | "custom" | "lesson" | "ai_lesson";
 
 type Props = {
   sample: string;

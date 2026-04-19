@@ -100,15 +100,25 @@ export const lesson = typesprint.table(
   {
     id: text("id").primaryKey(),
     level: text("level").notNull(), // beginner | intermediate | advanced
-    category: text("category").notNull(), // home_row | numbers | symbols | paragraph | coding
+    category: text("category").notNull(), // home_row | numbers | symbols | paragraph | coding | mixed
     title: text("title").notNull(),
     content: text("content").notNull(),
     orderIndex: integer("order_index").notNull().default(0),
+    source: text("source").notNull().default("seed"), // seed | ai
+    userId: text("user_id").references(() => user.id, {
+      onDelete: "set null",
+    }),
+    topic: text("topic"),
+    tone: text("tone"),
+    language: text("language"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
   },
-  (t) => [index("lesson_level_idx").on(t.level, t.orderIndex)],
+  (t) => [
+    index("lesson_level_idx").on(t.level, t.orderIndex),
+    index("lesson_ai_user_idx").on(t.source, t.userId, t.createdAt),
+  ],
 );
 
 export const typingSession = typesprint.table(

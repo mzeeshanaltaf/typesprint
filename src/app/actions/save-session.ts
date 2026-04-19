@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
+"use server";
+
 import { headers } from "next/headers";
 import { randomUUID } from "node:crypto";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -9,8 +10,8 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { dailyStat, streak, typingSession } from "@/db/schema";
 
-const BodySchema = z.object({
-  mode: z.enum(["15", "30", "60", "custom", "lesson"]),
+const InputSchema = z.object({
+  mode: z.enum(["15", "30", "60", "custom", "lesson", "ai_lesson"]),
   durationSec: z.number().int().positive().max(60 * 60),
   wpm: z.number().int().min(0).max(500),
   accuracy: z.number().int().min(0).max(100),
@@ -19,8 +20,9 @@ const BodySchema = z.object({
   lessonId: z.string().optional(),
 });
 
+export type SaveSessionInput = z.infer<typeof InputSchema>;
+
 function dayKey(d: Date): string {
-  // YYYY-MM-DD in UTC
   return d.toISOString().slice(0, 10);
 }
 
@@ -30,32 +32,23 @@ function addDays(iso: string, days: number): string {
   return dayKey(d);
 }
 
-export async function POST(req: Request) {
+export async function saveSession(
+  raw: SaveSessionInput,
+): Promise<{ ok: true } | { ok: false; error: string }> {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) {
-    return NextResponse.json({ error: "Unauthenticated" }, { status: 401 });
+    return { ok: false, error: "Unauthenticated" };
   }
 
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-  }
-
-  const parsed = BodySchema.safeParse(body);
+  const parsed = InputSchema.safeParse(raw);
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Invalid body", issues: parsed.error.flatten() },
-      { status: 400 },
-    );
+    return { ok: false, error: "Invalid input" };
   }
 
   const input = parsed.data;
   const userId = session.user.id;
   const today = dayKey(new Date());
 
-  // 1) Insert the session row
   await db.insert(typingSession).values({
     id: randomUUID(),
     userId,
@@ -68,7 +61,6 @@ export async function POST(req: Request) {
     lessonId: input.lessonId ?? null,
   });
 
-  // 2) Upsert daily_stat — weighted rolling averages via sessionsCount
   await db
     .insert(dailyStat)
     .values({
@@ -91,7 +83,6 @@ export async function POST(req: Request) {
       },
     });
 
-  // 3) Update streak
   const existing = await db
     .select()
     .from(streak)
@@ -123,7 +114,12 @@ export async function POST(req: Request) {
       .where(eq(streak.userId, userId));
   }
 
-  revalidateTag("typing-sessions", "max");
+  // Eager invalidation: next read of any cached function tagged "typing-sessions"
+  // will block-fetch fresh data (no stale-while-revalidate). Server Actions also
+  // automatically invalidate the client-side Router Cache, so /dashboard,
+  // /dashboard/sessions, and lesson detail pages reflect the new row on the very
+  // next navigation — no refresh needed.
+  updateTag("typing-sessions");
 
-  return NextResponse.json({ ok: true });
+  return { ok: true };
 }
