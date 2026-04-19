@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import {
   Card,
@@ -15,7 +16,7 @@ export const metadata = {
 
 export default function SignUpPage() {
   return (
-    <Card className="w-full max-w-md border-border/60 backdrop-blur supports-[backdrop-filter]:bg-card/80">
+    <Card className="w-full max-w-md border-border/60 backdrop-blur supports-backdrop-filter:bg-card/80">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Create your account</CardTitle>
         <CardDescription>
@@ -23,7 +24,9 @@ export default function SignUpPage() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <SignUpForm />
+        <Suspense>
+          <SignUpForm />
+        </Suspense>
       </CardContent>
       <CardFooter className="justify-center text-sm text-muted-foreground">
         Already have an account?{" "}
