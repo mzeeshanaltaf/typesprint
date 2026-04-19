@@ -45,8 +45,8 @@ export function DashboardCharts({ data }: { data: Point[] }) {
         </MetricButton>
       </div>
 
-      <div className="h-64 w-full">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="w-full">
+        <ResponsiveContainer width="100%" height={256}>
           {metric === "wpm" ? (
             <LineChart data={data} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
               <defs>

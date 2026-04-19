@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { unstable_cache } from "next/cache";
 import { desc, eq, sql } from "drizzle-orm";
 import { Clock, Flame, Gauge, Trophy } from "lucide-react";
 
@@ -18,6 +19,59 @@ export const metadata: Metadata = {
   title: "Dashboard",
   description: "Your typing progress — WPM trends, streak, and recent sessions.",
 };
+
+const getCachedDashboardData = unstable_cache(
+  async (userId: string, sinceDay: string, today: string) => {
+    const [dailyRows, streakRow, rawSessions, aggregates] = await Promise.all([
+      db
+        .select()
+        .from(dailyStat)
+        .where(
+          sql`${dailyStat.userId} = ${userId} AND ${dailyStat.day} >= ${sinceDay}`,
+        )
+        .orderBy(dailyStat.day),
+      db.select().from(streak).where(eq(streak.userId, userId)).limit(1),
+      db
+        .select({
+          id: typingSession.id,
+          mode: typingSession.mode,
+          wpm: typingSession.wpm,
+          accuracy: typingSession.accuracy,
+          mistakes: typingSession.mistakes,
+          durationSec: typingSession.durationSec,
+          createdAt: typingSession.createdAt,
+          lessonTitle: lesson.title,
+        })
+        .from(typingSession)
+        .leftJoin(lesson, eq(typingSession.lessonId, lesson.id))
+        .where(eq(typingSession.userId, userId))
+        .orderBy(desc(typingSession.createdAt))
+        .limit(10),
+      db
+        .select({
+          bestWpm: sql<number>`COALESCE(MAX(${typingSession.wpm}), 0)`,
+          avgWpm: sql<number>`COALESCE(ROUND(AVG(${typingSession.wpm}))::int, 0)`,
+          avgAccuracy: sql<number>`COALESCE(ROUND(AVG(${typingSession.accuracy}))::int, 0)`,
+          totalSessions: sql<number>`COUNT(*)::int`,
+        })
+        .from(typingSession)
+        .where(eq(typingSession.userId, userId)),
+    ]);
+
+    return {
+      dailyRows,
+      streakRow,
+      recentSessions: rawSessions.map((r) => ({
+        ...r,
+        createdAt: r.createdAt.toISOString(),
+        lessonTitle: r.lessonTitle ?? null,
+      })),
+      aggregates,
+    };
+  },
+  ["dashboard-data"],
+  { tags: ["typing-sessions"] },
+);
 
 function formatDate(d: Date): string {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
@@ -43,41 +97,8 @@ export default async function DashboardPage() {
   const sinceDay = since.toISOString().slice(0, 10);
   const today = new Date().toISOString().slice(0, 10);
 
-  const [dailyRows, streakRow, recentSessions, aggregates] = await Promise.all([
-    db
-      .select()
-      .from(dailyStat)
-      .where(
-        sql`${dailyStat.userId} = ${userId} AND ${dailyStat.day} >= ${sinceDay}`,
-      )
-      .orderBy(dailyStat.day),
-    db.select().from(streak).where(eq(streak.userId, userId)).limit(1),
-    db
-      .select({
-        id: typingSession.id,
-        mode: typingSession.mode,
-        wpm: typingSession.wpm,
-        accuracy: typingSession.accuracy,
-        mistakes: typingSession.mistakes,
-        durationSec: typingSession.durationSec,
-        createdAt: typingSession.createdAt,
-        lessonTitle: lesson.title,
-      })
-      .from(typingSession)
-      .leftJoin(lesson, eq(typingSession.lessonId, lesson.id))
-      .where(eq(typingSession.userId, userId))
-      .orderBy(desc(typingSession.createdAt))
-      .limit(10),
-    db
-      .select({
-        bestWpm: sql<number>`COALESCE(MAX(${typingSession.wpm}), 0)`,
-        avgWpm: sql<number>`COALESCE(ROUND(AVG(${typingSession.wpm}))::int, 0)`,
-        avgAccuracy: sql<number>`COALESCE(ROUND(AVG(${typingSession.accuracy}))::int, 0)`,
-        totalSessions: sql<number>`COUNT(*)::int`,
-      })
-      .from(typingSession)
-      .where(eq(typingSession.userId, userId)),
-  ]);
+  const { dailyRows, streakRow, recentSessions, aggregates } =
+    await getCachedDashboardData(userId, sinceDay, today);
 
   const todayStat = dailyRows.find((r) => r.day === today);
   const agg = aggregates[0] ?? {
@@ -158,13 +179,7 @@ export default async function DashboardPage() {
                   <Link href="/dashboard/sessions">View all</Link>
                 </Button>
               </div>
-              <SessionsTable
-                sessions={recentSessions.map((s) => ({
-                  ...s,
-                  createdAt: s.createdAt.toISOString(),
-                  lessonTitle: s.lessonTitle ?? null,
-                }))}
-              />
+              <SessionsTable sessions={recentSessions} />
             </CardContent>
           </Card>
         </div>

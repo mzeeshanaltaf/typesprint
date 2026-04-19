@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { randomUUID } from "node:crypto";
+import { revalidateTag } from "next/cache";
 import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -121,6 +122,8 @@ export async function POST(req: Request) {
       })
       .where(eq(streak.userId, userId));
   }
+
+  revalidateTag("typing-sessions");
 
   return NextResponse.json({ ok: true });
 }

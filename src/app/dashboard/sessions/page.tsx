@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { unstable_cache } from "next/cache";
 import { desc, eq, sql } from "drizzle-orm";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -17,6 +18,46 @@ export const metadata: Metadata = { title: "All sessions" };
 
 const PAGE_SIZE = 25;
 
+const getCachedSessionsPage = unstable_cache(
+  async (userId: string, page: number) => {
+    const offset = (page - 1) * PAGE_SIZE;
+    const [rows, [{ total }]] = await Promise.all([
+      db
+        .select({
+          id: typingSession.id,
+          mode: typingSession.mode,
+          wpm: typingSession.wpm,
+          accuracy: typingSession.accuracy,
+          mistakes: typingSession.mistakes,
+          durationSec: typingSession.durationSec,
+          createdAt: typingSession.createdAt,
+          lessonTitle: lesson.title,
+        })
+        .from(typingSession)
+        .leftJoin(lesson, eq(typingSession.lessonId, lesson.id))
+        .where(eq(typingSession.userId, userId))
+        .orderBy(desc(typingSession.createdAt))
+        .limit(PAGE_SIZE)
+        .offset(offset),
+      db
+        .select({ total: sql<number>`count(*)::int` })
+        .from(typingSession)
+        .where(eq(typingSession.userId, userId)),
+    ]);
+
+    return {
+      sessions: rows.map((r) => ({
+        ...r,
+        createdAt: r.createdAt.toISOString(),
+        lessonTitle: r.lessonTitle ?? null,
+      })),
+      total,
+    };
+  },
+  ["sessions-page"],
+  { tags: ["typing-sessions"] },
+);
+
 export default async function AllSessionsPage({
   searchParams,
 }: {
@@ -28,39 +69,9 @@ export default async function AllSessionsPage({
 
   const { page: pageParam } = await searchParams;
   const page = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
-  const offset = (page - 1) * PAGE_SIZE;
 
-  const [rows, [{ total }]] = await Promise.all([
-    db
-      .select({
-        id: typingSession.id,
-        mode: typingSession.mode,
-        wpm: typingSession.wpm,
-        accuracy: typingSession.accuracy,
-        mistakes: typingSession.mistakes,
-        durationSec: typingSession.durationSec,
-        createdAt: typingSession.createdAt,
-        lessonTitle: lesson.title,
-      })
-      .from(typingSession)
-      .leftJoin(lesson, eq(typingSession.lessonId, lesson.id))
-      .where(eq(typingSession.userId, userId))
-      .orderBy(desc(typingSession.createdAt))
-      .limit(PAGE_SIZE)
-      .offset(offset),
-    db
-      .select({ total: sql<number>`count(*)::int` })
-      .from(typingSession)
-      .where(eq(typingSession.userId, userId)),
-  ]);
-
+  const { sessions, total } = await getCachedSessionsPage(userId, page);
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-
-  const sessions = rows.map((r) => ({
-    ...r,
-    createdAt: r.createdAt.toISOString(),
-    lessonTitle: r.lessonTitle ?? null,
-  }));
 
   return (
     <div className="flex min-h-svh flex-col">
