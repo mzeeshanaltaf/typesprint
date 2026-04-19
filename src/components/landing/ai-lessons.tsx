@@ -31,7 +31,6 @@ export function AiLessons() {
   return (
     <Section id="ai-lessons" className="bg-muted/30">
       <SectionHeader
-        eyebrow="✨ New"
         title="Practice on lessons generated just for you"
         description="Tell TypeSprint what you want to type — it writes the lesson, you keep the progress."
       />

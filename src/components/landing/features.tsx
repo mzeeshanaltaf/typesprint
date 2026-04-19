@@ -18,7 +18,7 @@ const features = [
     icon: Sparkles,
     title: "AI-generated lessons",
     description:
-      "Pick a topic, difficulty, length, and tone — OpenAI writes a custom drill saved to your library to retype anytime.",
+      "Pick a topic, difficulty, length, and tone — AI writes a custom drill saved to your library to retype anytime.",
   },
   {
     icon: Activity,

@@ -34,7 +34,7 @@ export function Hero() {
             className="gap-1.5 rounded-full border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium backdrop-blur"
           >
             <Sparkles className="size-3 text-indigo-500" />
-            New · AI-generated typing lessons
+            AI-generated typing lessons
           </Badge>
         </motion.div>
 

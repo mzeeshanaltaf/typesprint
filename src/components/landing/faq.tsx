@@ -11,7 +11,7 @@ import { Section, SectionHeader } from "@/components/landing/section";
 const faqs = [
   {
     q: "What are AI-generated lessons?",
-    a: "Tell TypeSprint a topic, difficulty, length, tone — and a programming language for code drills — and OpenAI writes a custom lesson tailored to you. Each lesson is saved to your library so you can retype it and track your best WPM and accuracy across attempts.",
+    a: "Tell TypeSprint a topic, difficulty, length, tone — and a programming language for code drills — and AI writes a custom lesson tailored to you. Each lesson is saved to your library so you can retype it and track your best WPM and accuracy across attempts.",
   },
   {
     q: "How do I improve my typing speed?",
@@ -19,7 +19,7 @@ const faqs = [
   },
   {
     q: "Is TypeSprint free?",
-    a: "Yes — the Free plan covers unlimited sprints, beginner and intermediate lessons, and real-time WPM/accuracy. Pro unlocks the full lesson library, charts, and streak tracking.",
+    a: "Yes — every feature is free, forever. Unlimited sprints, the full lesson library, AI-generated lessons, charts, streaks, and dark mode all come with a free account. No credit card, no upgrade prompts.",
   },
   {
     q: "Can kids and beginners use it?",
