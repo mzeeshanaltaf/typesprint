@@ -51,29 +51,32 @@ export function TypingTest({
 
   const hasNewlines = sample.includes("\n");
 
+  // Stable ref so the listener never needs re-registration when handleKey changes
+  // (e.g. idle→running transition), eliminating the brief gap where Enter gets dropped.
+  const handleKeyRef = useRef(handleKey);
+  useEffect(() => { handleKeyRef.current = handleKey; });
+
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (!focused) return;
       if (status === "done") return;
-      // don't hijack common keyboard shortcuts
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (e.key === "Tab" || e.key === "Escape") return;
-      // allow Enter only when the sample contains newlines (e.g. coding lessons)
       if (e.key === "Enter") {
         if (hasNewlines) {
           e.preventDefault();
-          handleKey("\n");
+          handleKeyRef.current("\n");
         }
         return;
       }
       if (e.key === "Backspace" || e.key.length === 1) {
         e.preventDefault();
-        handleKey(e.key);
+        handleKeyRef.current(e.key);
       }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [focused, status, handleKey, hasNewlines]);
+  }, [focused, status, hasNewlines]); // handleKey intentionally omitted — accessed via ref
 
   const charStates = useMemo(
     () => computeCharStates(sample, typed),

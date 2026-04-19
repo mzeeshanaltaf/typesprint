@@ -89,20 +89,20 @@ const lessons: Array<{
     content:
       "Plan your day the night before. Tackle the hardest task first while your focus is sharp. Take short breaks every fifty minutes to maintain energy.",
   },
-  // Advanced — paragraph
+  // Advanced — paragraph (long, with numbers, symbols, punctuation)
   {
     level: "advanced",
     category: "paragraph",
-    title: "Literary Excerpt",
+    title: "Science & Numbers",
     content:
-      "It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity.",
+      "The speed of light in a vacuum is approximately 299,792,458 m/s — a constant denoted by 'c' in Einstein's famous equation E = mc^2. At that velocity, light travels roughly 9.461 × 10^15 metres per year (one light-year). The observable universe spans ~93 billion light-years in diameter, yet its age is only 13.8 billion years. How can this be? The answer lies in the expansion of space itself: galaxies aren't moving through space; space is stretching between them, carrying galaxies along for the ride.",
   },
   {
     level: "advanced",
     category: "paragraph",
-    title: "Technical Writing",
+    title: "Tech & Finance",
     content:
-      "Distributed systems require careful consideration of consistency, availability, and partition tolerance. The CAP theorem states that any system can guarantee at most two of these properties simultaneously.",
+      "In Q3 2025, the S&P 500 gained 7.4% (YTD: +18.2%), while 10-year Treasury yields hovered around 4.35%. Cloud-infrastructure spending topped $78B globally — AWS held 32% market share, Azure 23%, and GCP 11%. Meanwhile, the average DevOps team deploys ~200 times/day with a change-failure rate below 5%. For context: a 99.99% SLA allows just ~52 minutes of downtime per year. Monitoring latency at p99 (not just mean) is critical; a 2× slowdown at the tail can erode user satisfaction by up to 30% according to Google's 2024 UX research.",
   },
   // Advanced — coding
   {
@@ -129,20 +129,18 @@ const lessons: Array<{
 ];
 
 async function main() {
-  console.log("→ Seeding lessons...");
+  console.log("→ Seeding lessons (clearing existing first)...");
+  await db.delete(schema.lesson);
   for (let i = 0; i < lessons.length; i++) {
     const l = lessons[i];
-    await db
-      .insert(schema.lesson)
-      .values({
-        id: randomUUID(),
-        level: l.level,
-        category: l.category,
-        title: l.title,
-        content: l.content,
-        orderIndex: i,
-      })
-      .onConflictDoNothing();
+    await db.insert(schema.lesson).values({
+      id: randomUUID(),
+      level: l.level,
+      category: l.category,
+      title: l.title,
+      content: l.content,
+      orderIndex: i,
+    });
   }
   console.log(`✓ Seeded ${lessons.length} lessons`);
 
