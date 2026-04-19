@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { asc } from "drizzle-orm";
 
-import { SiteNavbar } from "@/components/layout/site-navbar";
-import { SiteFooter } from "@/components/landing/footer";
+import { AppNavbar } from "@/components/layout/app-navbar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { db } from "@/lib/db";
@@ -57,7 +56,7 @@ export default async function LessonsPage() {
 
   return (
     <div className="flex min-h-svh flex-col">
-      <SiteNavbar />
+      <AppNavbar />
       <main className="flex-1">
         <div className="mx-auto w-full max-w-6xl px-4 py-12 md:px-6 md:py-16">
           <header className="mb-12 flex flex-col gap-3">
@@ -128,7 +127,6 @@ export default async function LessonsPage() {
           )}
         </div>
       </main>
-      <SiteFooter />
     </div>
   );
 }

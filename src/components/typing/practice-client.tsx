@@ -7,7 +7,11 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { TypingTest, type TypingMode } from "@/components/typing/typing-test";
 import { authClient } from "@/lib/auth-client";
-import { getLongSample, getRandomSample } from "@/lib/typing/text-source";
+import {
+  getShortSample,
+  getMediumSample,
+  getLongSample,
+} from "@/lib/typing/text-source";
 import type { TypingResult } from "@/lib/typing/use-typing-test";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +23,12 @@ const MODES: Array<{ value: TypingMode; label: string; seconds: number | null }>
     { value: "custom", label: "Free", seconds: null },
   ];
 
+function sampleForMode(mode: TypingMode): string {
+  if (mode === "15") return getShortSample();
+  if (mode === "30") return getMediumSample();
+  return getLongSample(); // 60s and Free
+}
+
 export function PracticeClient() {
   const { data: session } = authClient.useSession();
   const [mode, setMode] = useState<TypingMode>("30");
@@ -26,10 +36,12 @@ export function PracticeClient() {
   const [runKey, setRunKey] = useState(0);
 
   useEffect(() => {
-    setSample(mode === "custom" ? getLongSample() : getRandomSample());
+    setSample(sampleForMode(mode));
   }, [mode, runKey]);
 
-  const seconds = MODES.find((m) => m.value === mode)?.seconds ?? 30;
+  const modeConfig = MODES.find((m) => m.value === mode);
+  // Use the config value directly — custom/Free has seconds=null which means count-up mode
+  const seconds = modeConfig ? modeConfig.seconds : 30;
 
   const onComplete = useCallback(
     async (result: TypingResult) => {

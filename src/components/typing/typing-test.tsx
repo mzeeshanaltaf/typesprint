@@ -49,18 +49,23 @@ export function TypingTest({
     containerRef.current?.focus();
   }, [sample]);
 
+  const hasNewlines = sample.includes("\n");
+
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (!focused) return;
       if (status === "done") return;
       // don't hijack common keyboard shortcuts
       if (e.metaKey || e.ctrlKey || e.altKey) return;
-      if (
-        e.key === "Tab" ||
-        e.key === "Escape" ||
-        e.key === "Enter"
-      )
+      if (e.key === "Tab" || e.key === "Escape") return;
+      // allow Enter only when the sample contains newlines (e.g. coding lessons)
+      if (e.key === "Enter") {
+        if (hasNewlines) {
+          e.preventDefault();
+          handleKey("\n");
+        }
         return;
+      }
       if (e.key === "Backspace" || e.key.length === 1) {
         e.preventDefault();
         handleKey(e.key);
@@ -68,7 +73,7 @@ export function TypingTest({
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [focused, status, handleKey]);
+  }, [focused, status, handleKey, hasNewlines]);
 
   const charStates = useMemo(
     () => computeCharStates(sample, typed),

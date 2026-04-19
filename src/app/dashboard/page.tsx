@@ -4,8 +4,7 @@ import { redirect } from "next/navigation";
 import { desc, eq, sql } from "drizzle-orm";
 import { Clock, Flame, Gauge, Trophy } from "lucide-react";
 
-import { SiteNavbar } from "@/components/layout/site-navbar";
-import { SiteFooter } from "@/components/landing/footer";
+import { AppNavbar } from "@/components/layout/app-navbar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -110,7 +109,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex min-h-svh flex-col">
-      <SiteNavbar />
+      <AppNavbar />
       <main className="flex-1">
         <div className="mx-auto w-full max-w-6xl px-4 py-12 md:px-6 md:py-16">
           <header className="mb-10 flex flex-col gap-2">
@@ -237,7 +236,6 @@ export default async function DashboardPage() {
           </Card>
         </div>
       </main>
-      <SiteFooter />
     </div>
   );
 }

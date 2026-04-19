@@ -4,8 +4,7 @@ import { notFound } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { ArrowLeft } from "lucide-react";
 
-import { SiteNavbar } from "@/components/layout/site-navbar";
-import { SiteFooter } from "@/components/landing/footer";
+import { AppNavbar } from "@/components/layout/app-navbar";
 import { Badge } from "@/components/ui/badge";
 import { LessonClient } from "@/components/typing/lesson-client";
 import { db } from "@/lib/db";
@@ -48,7 +47,7 @@ export default async function LessonPage({
 
   return (
     <div className="flex min-h-svh flex-col">
-      <SiteNavbar />
+      <AppNavbar />
       <main className="flex-1">
         <div className="mx-auto w-full max-w-4xl px-4 py-12 md:px-6 md:py-16">
           <Link
@@ -80,7 +79,6 @@ export default async function LessonPage({
           <LessonClient lessonId={l.id} content={l.content} />
         </div>
       </main>
-      <SiteFooter />
     </div>
   );
 }

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
-import { SiteNavbar } from "@/components/layout/site-navbar";
-import { SiteFooter } from "@/components/landing/footer";
+import { AppNavbar } from "@/components/layout/app-navbar";
 import { PracticeShell } from "@/components/typing/practice-shell";
 
 export const metadata: Metadata = {
@@ -13,7 +12,7 @@ export const metadata: Metadata = {
 export default function PracticePage() {
   return (
     <div className="flex min-h-svh flex-col">
-      <SiteNavbar />
+      <AppNavbar />
       <main className="flex-1">
         <div className="mx-auto w-full max-w-4xl px-4 py-12 md:px-6 md:py-16">
           <header className="mb-8 flex flex-col gap-2">
@@ -31,7 +30,6 @@ export default function PracticePage() {
           <PracticeShell />
         </div>
       </main>
-      <SiteFooter />
     </div>
   );
 }

@@ -11,11 +11,24 @@ const paragraphs = [
   "every expert was once a beginner who decided to keep showing up even when it was hard",
 ];
 
-export function getRandomSample(): string {
+/** ~1 paragraph, ~15 words — suits a 15 s sprint */
+export function getShortSample(): string {
   return paragraphs[Math.floor(Math.random() * paragraphs.length)];
 }
 
+/** ~2 paragraphs, ~30 words — suits a 30 s sprint */
+export function getMediumSample(): string {
+  const shuffled = [...paragraphs].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, 2).join(" ");
+}
+
+/** ~4 paragraphs, ~60 words — suits a 60 s sprint or free mode */
 export function getLongSample(): string {
   const shuffled = [...paragraphs].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, 4).join(" ");
+}
+
+/** @deprecated use getShortSample / getMediumSample / getLongSample */
+export function getRandomSample(): string {
+  return getShortSample();
 }

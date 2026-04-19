@@ -99,8 +99,8 @@ export function useTypingTest({
         setTyped((t) => t.slice(0, -1));
         return;
       }
-      // ignore modifier/nav/function keys
-      if (key.length !== 1) return;
+      // ignore modifier/nav/function keys (except \n which we pass explicitly for newlines)
+      if (key !== "\n" && key.length !== 1) return;
       if (status === "idle") {
         setStatus("running");
         startedAt.current = Date.now();
