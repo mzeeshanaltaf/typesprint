@@ -32,6 +32,7 @@ export function TypingTest({
   onComplete,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const cursorCharRef = useRef<HTMLSpanElement>(null);
   const [focused, setFocused] = useState(true);
   const [result, setResult] = useState<TypingResult | null>(null);
 
@@ -77,6 +78,11 @@ export function TypingTest({
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [focused, status, hasNewlines]); // handleKey intentionally omitted — accessed via ref
+
+  // Scroll the cursor character into view whenever it moves.
+  useEffect(() => {
+    cursorCharRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [typed.length]);
 
   const charStates = useMemo(
     () => computeCharStates(sample, typed),
@@ -142,7 +148,7 @@ export function TypingTest({
             const isCursor = i === typed.length && status !== "done";
             const isNewline = char === "\n";
             return (
-              <span key={i} className="relative">
+              <span key={i} ref={isCursor ? cursorCharRef : null} className="relative">
                 {isCursor && (
                   <motion.span
                     layoutId={`cursor-${lessonId ?? mode}`}

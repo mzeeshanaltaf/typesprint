@@ -1,11 +1,21 @@
 export type CharState = "pending" | "correct" | "wrong";
 
+// Normalize typographically-fancy quotes to their plain keyboard equivalents so
+// that AI-generated content (which uses curly quotes) matches what users type.
+function norm(ch: string): string {
+  if (ch === "\u2018" || ch === "\u2019" || ch === "\u201A" || ch === "\u201B")
+    return "'";
+  if (ch === "\u201C" || ch === "\u201D" || ch === "\u201E" || ch === "\u201F")
+    return '"';
+  return ch;
+}
+
 export function computeCharStates(sample: string, typed: string): CharState[] {
   const states: CharState[] = new Array(sample.length);
   for (let i = 0; i < sample.length; i++) {
     const t = typed[i];
     if (t === undefined) states[i] = "pending";
-    else if (t === sample[i]) states[i] = "correct";
+    else if (norm(t) === norm(sample[i])) states[i] = "correct";
     else states[i] = "wrong";
   }
   return states;
@@ -15,7 +25,7 @@ export function countCorrect(sample: string, typed: string): number {
   let correct = 0;
   const n = Math.min(sample.length, typed.length);
   for (let i = 0; i < n; i++) {
-    if (typed[i] === sample[i]) correct++;
+    if (norm(typed[i]) === norm(sample[i])) correct++;
   }
   return correct;
 }
@@ -24,7 +34,7 @@ export function countMistakes(sample: string, typed: string): number {
   let wrong = 0;
   const n = Math.min(sample.length, typed.length);
   for (let i = 0; i < n; i++) {
-    if (typed[i] !== sample[i]) wrong++;
+    if (norm(typed[i]) !== norm(sample[i])) wrong++;
   }
   return wrong;
 }
