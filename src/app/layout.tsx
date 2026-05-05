@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/next";
 
 import { BfcacheGuard } from "@/components/bfcache-guard";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -80,6 +81,7 @@ export default function RootLayout({
           <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
           <Toaster richColors position="top-center" />
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
