@@ -18,6 +18,10 @@ export const metadata: Metadata = {
   title: "AI Lessons",
   description:
     "Generate personalized typing lessons with AI — pick a level, type, length, and topic.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default async function AiLessonsPage() {

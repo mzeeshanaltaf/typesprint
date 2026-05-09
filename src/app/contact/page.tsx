@@ -5,9 +5,12 @@ import { SiteFooter } from "@/components/landing/footer";
 import { ContactForm } from "@/components/contact/contact-form";
 
 export const metadata: Metadata = {
-  title: "Contact — TypeSprint",
+  title: "Contact",
   description:
     "Get in touch with the TypeSprint team. Questions, feedback, or partnership requests — we read every message.",
+  alternates: {
+    canonical: "/contact",
+  },
 };
 
 const ERROR_MESSAGES: Record<string, string> = {

@@ -33,10 +33,11 @@ export async function generateMetadata({
   const { id } = await params;
   const rows = await db.select().from(lesson).where(eq(lesson.id, id)).limit(1);
   const l = rows[0];
-  if (!l) return { title: "AI Lesson" };
+  if (!l) return { title: "AI Lesson", robots: { index: false, follow: false } };
   return {
     title: l.title,
     description: `AI-generated typing lesson: ${l.title}`,
+    robots: { index: false, follow: false },
   };
 }
 

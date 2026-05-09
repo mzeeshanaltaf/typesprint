@@ -4,6 +4,9 @@ import { ProsePage } from "@/components/layout/prose-page";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "How TypeSprint collects, uses, and protects your data.",
+  alternates: {
+    canonical: "/privacy",
+  },
 };
 
 const EFFECTIVE = "18 April 2025";

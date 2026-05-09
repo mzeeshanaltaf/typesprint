@@ -7,8 +7,12 @@ import { ArrowLeft } from "lucide-react";
 import { PublicPageLayout } from "@/components/layout/public-page-layout";
 import { Badge } from "@/components/ui/badge";
 import { LessonClient } from "@/components/typing/lesson-client";
+import { JsonLd } from "@/components/seo/json-ld";
 import { db } from "@/lib/db";
 import { lesson } from "@/db/schema";
+
+const siteUrl =
+  process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
 const CATEGORY_LABEL: Record<string, string> = {
   home_row: "Home row",
@@ -29,9 +33,14 @@ export async function generateMetadata({
   const rows = await db.select().from(lesson).where(eq(lesson.id, id)).limit(1);
   const l = rows[0];
   if (!l) return { title: "Lesson" };
+  const categoryLabel = CATEGORY_LABEL[l.category] ?? l.category;
+  const description = `${l.level.charAt(0).toUpperCase()}${l.level.slice(1)} ${categoryLabel.toLowerCase()} typing lesson: ${l.title}. Type the passage to measure your real-time WPM and accuracy.`;
   return {
     title: l.title,
-    description: `Typing lesson: ${l.title}`,
+    description,
+    alternates: {
+      canonical: `/lessons/${id}`,
+    },
   };
 }
 
@@ -45,8 +54,56 @@ export default async function LessonPage({
   const l = rows[0];
   if (!l) notFound();
 
+  const courseLd = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: l.title,
+    description: `${l.level.charAt(0).toUpperCase()}${l.level.slice(1)} typing lesson covering ${
+      CATEGORY_LABEL[l.category] ?? l.category
+    }.`,
+    provider: {
+      "@type": "Organization",
+      name: "TypeSprint",
+      url: siteUrl,
+    },
+    educationalLevel: l.level,
+    inLanguage: "en",
+    url: `${siteUrl}/lessons/${l.id}`,
+    hasCourseInstance: {
+      "@type": "CourseInstance",
+      courseMode: "Online",
+      courseWorkload: "PT5M",
+    },
+  };
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: `${siteUrl}/`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Lessons",
+        item: `${siteUrl}/lessons`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: l.title,
+        item: `${siteUrl}/lessons/${l.id}`,
+      },
+    ],
+  };
+
   return (
     <PublicPageLayout>
+      <JsonLd data={[courseLd, breadcrumbLd]} />
       <div className="mx-auto w-full max-w-4xl px-4 py-12 md:px-6 md:py-16">
           <Link
             href="/lessons"

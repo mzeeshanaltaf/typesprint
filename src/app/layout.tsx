@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/next";
 
 import { BfcacheGuard } from "@/components/bfcache-guard";
+import { JsonLd } from "@/components/seo/json-ld";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -38,6 +39,9 @@ export const metadata: Metadata = {
     "learn typing",
     "typing speed",
   ],
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "TypeSprint — Learn Typing Faster & Smarter",
     description:
@@ -52,6 +56,10 @@ export const metadata: Metadata = {
     description:
       "Improve your typing speed and accuracy with structured practice.",
   },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export const viewport: Viewport = {
@@ -59,6 +67,26 @@ export const viewport: Viewport = {
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
   ],
+};
+
+const organizationLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "TypeSprint",
+  url: siteUrl,
+  logo: `${siteUrl}/icon.png`,
+};
+
+const websiteLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "TypeSprint",
+  url: siteUrl,
+  potentialAction: {
+    "@type": "SearchAction",
+    target: `${siteUrl}/lessons?q={search_term_string}`,
+    "query-input": "required name=search_term_string",
+  },
 };
 
 export default function RootLayout({
@@ -71,6 +99,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${jetbrains.variable} font-sans antialiased`}
       >
+        <JsonLd data={[organizationLd, websiteLd]} />
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: "About",
   description:
     "Learn about TypeSprint — why it was built, who it's for, and what makes it different.",
+  alternates: {
+    canonical: "/about",
+  },
 };
 
 export default function AboutPage() {

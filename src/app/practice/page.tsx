@@ -4,9 +4,12 @@ import { PublicPageLayout } from "@/components/layout/public-page-layout";
 import { PracticeShell } from "@/components/typing/practice-shell";
 
 export const metadata: Metadata = {
-  title: "Practice",
+  title: "Free Typing Test — Measure WPM and Accuracy",
   description:
-    "Run a free typing sprint — 15, 30, or 60 seconds. Real-time WPM and accuracy.",
+    "Take a free typing test in 15, 30, or 60 seconds. See your real-time words per minute and accuracy. No sign-up required to try a sprint.",
+  alternates: {
+    canonical: "/practice",
+  },
 };
 
 export default function PracticePage() {
@@ -18,7 +21,7 @@ export default function PracticePage() {
             Practice
           </p>
           <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-            Free-form typing sprint
+            Free typing test — measure your WPM and accuracy
           </h1>
           <p className="text-muted-foreground md:text-lg">
             Pick a duration, type the text, see your WPM and accuracy. Sign in

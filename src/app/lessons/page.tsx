@@ -9,9 +9,12 @@ import { db } from "@/lib/db";
 import { lesson } from "@/db/schema";
 
 export const metadata: Metadata = {
-  title: "Lessons",
+  title: "Typing Lessons — Beginner to Advanced",
   description:
-    "Structured typing lessons grouped by level — beginner, intermediate, and advanced.",
+    "Structured typing lessons grouped by level: home row drills for beginners, numbers and symbols for intermediates, and code and prose passages for advanced typists.",
+  alternates: {
+    canonical: "/lessons",
+  },
 };
 
 const LEVEL_ORDER = ["beginner", "intermediate", "advanced"] as const;
@@ -62,7 +65,7 @@ export default async function LessonsPage() {
               Lessons
             </p>
             <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-              A structured path from home row to code
+              Typing lessons — a structured path from home row to code
             </h1>
             <p className="max-w-2xl text-muted-foreground md:text-lg">
               Short focused lessons grouped by level. Pick one, type the text,

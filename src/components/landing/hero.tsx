@@ -58,9 +58,22 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="mt-6 max-w-2xl text-balance text-lg text-muted-foreground md:text-xl"
         >
-          Sprint through real-time drills, follow structured lessons, or
-          generate your own AI lesson on any topic, difficulty, and length —
-          then watch your progress climb in a dashboard built to motivate.
+          Sprint through{" "}
+          <Link
+            href="/practice"
+            className="underline decoration-muted-foreground/40 underline-offset-4 transition-colors hover:text-foreground"
+          >
+            real-time typing drills
+          </Link>
+          , follow{" "}
+          <Link
+            href="/lessons"
+            className="underline decoration-muted-foreground/40 underline-offset-4 transition-colors hover:text-foreground"
+          >
+            structured lessons
+          </Link>
+          , or generate your own AI lesson on any topic, difficulty, and length
+          — then watch your progress climb in a dashboard built to motivate.
         </motion.p>
 
         <motion.div

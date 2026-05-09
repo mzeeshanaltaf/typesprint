@@ -4,6 +4,9 @@ import { ProsePage } from "@/components/layout/prose-page";
 export const metadata: Metadata = {
   title: "Terms of Service",
   description: "The terms that govern your use of TypeSprint.",
+  alternates: {
+    canonical: "/terms",
+  },
 };
 
 const EFFECTIVE = "18 April 2025";

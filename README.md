@@ -17,7 +17,7 @@ A modern typing tutor web app built with Next.js 16. Practice typing, follow str
 - **Admin panel** — CRUD for lessons, user role management, and platform-wide analytics
 - **Contact form** — progressive-enhancement form wired to an n8n webhook
 - **Dark / light mode** — next-themes toggle, system preference respected
-- **SEO** — sitemap, robots.txt, Open Graph metadata
+- **SEO** — DB-backed sitemap (every curated lesson), robots.txt, per-route canonicals, dynamic Open Graph + Twitter + Apple-icon images via `ImageResponse`, and JSON-LD structured data (Organization, WebSite, WebApplication, FAQ, Course, Breadcrumb)
 
 ## Tech Stack
 
