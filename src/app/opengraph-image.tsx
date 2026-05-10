@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "TypeSprint — Learn Typing Faster & Smarter";
+export const alt = "TypeSprint — Improve Typing Speed with Lessons & AI";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -81,13 +81,29 @@ export default async function OgImage() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            fontSize: 24,
-            color: "#71717a",
-            fontFamily: "ui-monospace, SFMono-Regular, monospace",
           }}
         >
-          <span>typesprint</span>
-          <span>$ npm run sprint</span>
+          <span
+            style={{
+              fontSize: 24,
+              color: "#71717a",
+              fontFamily: "ui-monospace, SFMono-Regular, monospace",
+            }}
+          >
+            typesprint.zeeshanai.cloud
+          </span>
+          <span
+            style={{
+              fontSize: 26,
+              fontWeight: 600,
+              color: "#ffffff",
+              backgroundColor: "#4f46e5",
+              padding: "12px 28px",
+              borderRadius: 10,
+            }}
+          >
+            Start for free →
+          </span>
         </div>
       </div>
     ),

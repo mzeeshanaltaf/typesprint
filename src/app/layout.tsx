@@ -43,18 +43,18 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "TypeSprint — Learn Typing Faster & Smarter",
+    title: "TypeSprint — Improve Typing Speed with Lessons & AI",
     description:
-      "Real-time WPM, accuracy tracking, structured lessons, and progress analytics.",
+      "Free typing tutor with real-time WPM tracking, structured lessons from beginner to advanced, AI-generated drills, and progress analytics.",
     type: "website",
     url: siteUrl,
     siteName: "TypeSprint",
   },
   twitter: {
     card: "summary_large_image",
-    title: "TypeSprint",
+    title: "TypeSprint — Improve Typing Speed with Lessons & AI",
     description:
-      "Improve your typing speed and accuracy with structured practice.",
+      "Free typing tutor with real-time WPM tracking, structured lessons from beginner to advanced, AI-generated drills, and progress analytics.",
   },
   robots: {
     index: true,
