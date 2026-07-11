@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import Script from "next/script";
 import { Toaster } from "sonner";
-import { Analytics } from "@vercel/analytics/next";
 
 import { BfcacheGuard } from "@/components/bfcache-guard";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -110,7 +110,16 @@ export default function RootLayout({
           <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
           <Toaster richColors position="top-center" />
         </ThemeProvider>
-        <Analytics />
+        {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
+          <Script
+            src={
+              process.env.NEXT_PUBLIC_UMAMI_SRC ??
+              "https://analytics.zeeshanai.cloud/script.js"
+            }
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+            strategy="afterInteractive"
+          />
+        )}
       </body>
     </html>
   );
