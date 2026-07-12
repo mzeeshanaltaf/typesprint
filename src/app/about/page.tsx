@@ -63,8 +63,8 @@ export default function AboutPage() {
 
       <h2>Contact</h2>
       <p>
-        Questions, bug reports, or feature requests:{" "}
-        <a href="mailto:hello@typesprint.app">hello@typesprint.app</a>
+        Questions, bug reports, or feature requests? Head over to our{" "}
+        <a href="/contact">Contact page</a> and we&apos;ll get back to you.
       </p>
     </ProsePage>
   );

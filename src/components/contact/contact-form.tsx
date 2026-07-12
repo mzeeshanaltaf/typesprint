@@ -32,6 +32,9 @@ export function ContactForm({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  // Honeypot: bots fill it, humans never see it. Non-descriptive name so
+  // browser/Google autofill leaves it empty.
+  const [contactTime, setContactTime] = useState("");
   const [status, setStatus] = useState<Status>(
     initialSuccess ? "success" : initialError ? "error" : "idle",
   );
@@ -39,6 +42,12 @@ export function ContactForm({
 
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    // Honeypot filled → pretend success without hitting the API.
+    if (contactTime.trim()) {
+      setStatus("success");
+      return;
+    }
 
     const n = name.trim();
     const em = email.trim();
@@ -66,7 +75,12 @@ export function ContactForm({
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: n, email: em, message: msg }),
+        body: JSON.stringify({
+          name: n,
+          email: em,
+          message: msg,
+          contact_time: contactTime,
+        }),
       });
       const data = await res.json().catch(() => ({ success: false }));
       if (data.success) {
@@ -117,6 +131,24 @@ export function ContactForm({
       noValidate
       className="flex flex-col gap-5 rounded-2xl border border-border/60 bg-card/60 p-6 md:p-8"
     >
+      {/* Honeypot — hidden from users, off the tab order, and excluded from
+          autofill. Any value submitted here indicates a bot. */}
+      <div
+        aria-hidden="true"
+        style={{ position: "absolute", left: "-9999px", width: 1, height: 1, overflow: "hidden" }}
+      >
+        <label htmlFor="contact_time">Leave this field empty</label>
+        <input
+          id="contact_time"
+          name="contact_time"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={contactTime}
+          onChange={(e) => setContactTime(e.target.value)}
+        />
+      </div>
+
       <div className="flex flex-col gap-2">
         <Label htmlFor="contact-name">Full name</Label>
         <div className="relative">

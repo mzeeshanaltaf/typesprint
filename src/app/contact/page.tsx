@@ -17,6 +17,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   fields: "Please fill in all fields.",
   email: "Please enter a valid email address.",
   length: "Message must be 1000 characters or fewer.",
+  rate: "Too many requests. Please try again in a few minutes.",
   webhook: "Something went wrong. Please try again.",
   server: "Internal server error. Please try again later.",
   parse: "Invalid submission. Please try again.",

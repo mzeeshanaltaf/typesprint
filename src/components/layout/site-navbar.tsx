@@ -22,6 +22,7 @@ const navItems = [
   { href: "/#how", label: "How it works" },
   { href: "/#pricing", label: "Pricing" },
   { href: "/#faq", label: "FAQ" },
+  { href: "/contact", label: "Contact" },
 ];
 
 function scrollToHash(href: string) {
@@ -64,7 +65,7 @@ export function SiteNavbar() {
               href={item.href}
               className="text-muted-foreground transition-colors hover:text-foreground"
               onClick={
-                pathname === "/"
+                pathname === "/" && item.href.startsWith("/#")
                   ? (e) => { e.preventDefault(); scrollToHash(item.href); }
                   : undefined
               }

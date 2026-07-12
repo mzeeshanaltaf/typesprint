@@ -1,12 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { contactRatelimit, getClientIp } from "@/lib/ratelimit";
+
 const WEBHOOK_URL =
   "https://n8n.zeeshanai.cloud/webhook/bac41859-89f0-4720-b3cd-37328cfbfce1";
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Honeypot field: an off-screen input that real users never see or fill.
+// Its name is deliberately non-descriptive so browser/Google autofill leaves
+// it empty — any non-empty value means an automated submission.
+const HONEYPOT_FIELD = "contact_time";
+
 async function parseBody(
   req: NextRequest,
-): Promise<{ name: string; email: string; message: string }> {
+): Promise<{
+  name: string;
+  email: string;
+  message: string;
+  honeypot: string;
+}> {
   const ct = req.headers.get("content-type") ?? "";
   if (
     ct.includes("application/x-www-form-urlencoded") ||
@@ -17,6 +29,7 @@ async function parseBody(
       name: (fd.get("name") as string | null) ?? "",
       email: (fd.get("email") as string | null) ?? "",
       message: (fd.get("message") as string | null) ?? "",
+      honeypot: (fd.get(HONEYPOT_FIELD) as string | null) ?? "",
     };
   }
   const body = await req.json();
@@ -24,6 +37,7 @@ async function parseBody(
     name: body.name ?? "",
     email: body.email ?? "",
     message: body.message ?? "",
+    honeypot: body[HONEYPOT_FIELD] ?? "",
   };
 }
 
@@ -33,9 +47,29 @@ export async function POST(req: NextRequest) {
     ct.includes("application/x-www-form-urlencoded") ||
     ct.includes("multipart/form-data");
 
-  let name: string, email: string, message: string;
+  // Per-IP rate limiting (skipped if Upstash isn't configured).
+  if (contactRatelimit) {
+    const ip = getClientIp(req);
+    const { success } = await contactRatelimit.limit(ip);
+    if (!success) {
+      if (isFormPost)
+        return NextResponse.redirect(
+          new URL("/contact?error=rate", req.url),
+          303,
+        );
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Too many requests. Please try again in a few minutes.",
+        },
+        { status: 429 },
+      );
+    }
+  }
+
+  let name: string, email: string, message: string, honeypot: string;
   try {
-    ({ name, email, message } = await parseBody(req));
+    ({ name, email, message, honeypot } = await parseBody(req));
   } catch (err) {
     console.error("[contact] parse error:", err);
     if (isFormPost)
@@ -47,6 +81,15 @@ export async function POST(req: NextRequest) {
       { success: false, message: "Invalid request body." },
       { status: 400 },
     );
+  }
+
+  // Honeypot tripped — silently accept so the bot thinks it succeeded, but
+  // never forward the submission.
+  if (honeypot.trim()) {
+    console.warn("[contact] honeypot triggered, dropping submission");
+    if (isFormPost)
+      return NextResponse.redirect(new URL("/contact?sent=1", req.url), 303);
+    return NextResponse.json({ success: true });
   }
 
   const n = name.trim();
