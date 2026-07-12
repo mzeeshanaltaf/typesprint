@@ -99,8 +99,8 @@ export default function TermsPage() {
 
       <h2>10. Contact</h2>
       <p>
-        Questions about these terms:{" "}
-        <a href="mailto:legal@typesprint.app">legal@typesprint.app</a>
+        Questions about these terms? Get in touch through our{" "}
+        <a href="/contact">Contact Us</a> page.
       </p>
     </ProsePage>
   );

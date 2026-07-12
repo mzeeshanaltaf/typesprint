@@ -89,9 +89,9 @@ export default function PrivacyPage() {
       <h2>6. Your rights</h2>
       <p>
         Depending on your jurisdiction you may have the right to access, correct,
-        export, or delete your personal data. Email us at{" "}
-        <a href="mailto:privacy@typesprint.app">privacy@typesprint.app</a> and we
-        will respond within 30 days.
+        export, or delete your personal data. Reach out via our{" "}
+        <a href="/contact">Contact Us</a>
+        {" "}page and we will respond within 30 days.
       </p>
 
       <h2>7. Children</h2>
@@ -110,7 +110,8 @@ export default function PrivacyPage() {
 
       <h2>9. Contact</h2>
       <p>
-        <a href="mailto:privacy@typesprint.app">privacy@typesprint.app</a>
+        Questions about your privacy? Get in touch through our{" "}
+        <a href="/contact">Contact Us</a> page.
       </p>
     </ProsePage>
   );
