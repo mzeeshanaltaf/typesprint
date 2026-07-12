@@ -1,0 +1,43 @@
+name: Deploy to Coolify
+
+# Triggers a Coolify deployment on every push to main. Unlike GitHub's raw
+# repo webhook (fire-once, no retry), this retries on transient failures such
+# as a 502 while Coolify is briefly unreachable, and surfaces a red run if all
+# attempts fail. Coolify's "auto deploy on git push" must stay OFF for this app
+# so pushes deploy exactly once.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {} # allow manual re-trigger from the Actions tab
+
+concurrency:
+  group: deploy-coolify
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Coolify deploy (with retries)
+        env:
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+          COOLIFY_APP_UUID: ${{ secrets.COOLIFY_APP_UUID }}
+        run: |
+          set -u
+          for i in 1 2 3 4 5; do
+            code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 30 \
+              "https://coolify.zeeshanai.cloud/api/v1/deploy?uuid=${COOLIFY_APP_UUID}&force=false" \
+              -H "Authorization: Bearer ${COOLIFY_API_TOKEN}" || echo "000")
+            echo "Attempt $i -> HTTP $code"
+            if [ "$code" = "200" ]; then
+              echo "Deploy queued successfully."
+              exit 0
+            fi
+            if [ "$i" -lt 5 ]; then
+              backoff=$((i * 15)) # 15s, 30s, 45s, 60s
+              echo "Retrying in ${backoff}s..."
+              sleep "$backoff"
+            fi
+          done
+          echo "::error::All 5 attempts to trigger the Coolify deploy failed."
+          exit 1
